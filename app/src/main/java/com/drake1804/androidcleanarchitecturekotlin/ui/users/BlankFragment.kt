@@ -1,7 +1,6 @@
 package com.drake1804.androidcleanarchitecturekotlin.ui.users
 
 
-import android.app.ProgressDialog
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
@@ -18,31 +17,27 @@ import com.drake1804.androidcleanarchitecturekotlin.data.rest.UserModel
 import kotlinx.android.synthetic.main.fragment_blank.*
 import javax.inject.Inject
 
-
-/**
- * A simple [Fragment] subclass.
- */
 class BlankFragment : Fragment(), IUsersView, SwipeRefreshLayout.OnRefreshListener {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        ACAKApplication.get(activity).
-    }
+    @Inject
+    lateinit var presenter: IUsersPresenter
+
+    private lateinit var usersAdapter: UsersAdapter
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view: View = inflater!!.inflate(R.layout.fragment_blank, container, false)
-        progressDialog = ProgressDialog(context)
-        progressDialog.setMessage("Loading...")
-        progressDialog.setCancelable(false)
-
+        ACAKApplication.get(activity).plusUsersComponent().inject(this)
         presenter.bindView(this)
 
+        return view
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        swipeRefreshLayout.setOnRefreshListener { this }
         recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         usersAdapter = UsersAdapter()
         recyclerView.adapter = usersAdapter
-
-        return view
     }
 
     override fun onResume() {
@@ -55,35 +50,26 @@ class BlankFragment : Fragment(), IUsersView, SwipeRefreshLayout.OnRefreshListen
         presenter.unbindView()
     }
 
-    override fun onRefresh() {
-        presenter.loadUsers()
-    }
+    override fun onRefresh() = presenter.loadUsers()
 
-    @Inject
-    lateinit var presenter: IUsersPresenter
-
-    private lateinit var progressDialog: ProgressDialog
-    private lateinit var usersAdapter: UsersAdapter
 
     override fun showProgress() {
-        progressDialog.show()
+        swipeRefreshLayout.isRefreshing = true
     }
+
 
     override fun showError(text: String) {
     }
 
     override fun dismissProgress() {
-        progressDialog.dismiss()
+        swipeRefreshLayout.isRefreshing = false
     }
 
-    override fun showToast(text: String) {
-        Toast.makeText(activity, text, Toast.LENGTH_LONG).show()
-    }
+    override fun showToast(text: String) = Toast.makeText(activity, text, Toast.LENGTH_LONG).show()
 
-    override fun showSnackbar(text: String) {
-        Snackbar.make(activity.findViewById(android.R.id.content), text, Snackbar.LENGTH_LONG).show()
-    }
 
-    override fun showUsers(users: List<UserModel>) {
-    }
+    override fun showSnackbar(text: String) = Snackbar.make(activity.findViewById(android.R.id.content), text, Snackbar.LENGTH_LONG).show()
+
+
+    override fun showUsers(users: List<UserModel>) = usersAdapter.setItems(users)
 }

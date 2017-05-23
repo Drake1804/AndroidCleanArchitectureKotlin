@@ -5,15 +5,15 @@ import com.drake1804.androidcleanarchitecturekotlin.business.interfaces.IUsersPr
 import com.drake1804.androidcleanarchitecturekotlin.utils.NetworkUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
+import timber.log.Timber
 
 /**
  * Created by drake1804 on 5/20/17.
  */
 class UsersPresenter(val usersInteractor: IUsersInteractor) : IUsersPresenter {
 
-    var usersView: IUsersView? = null
-    val compositeDisposable: CompositeDisposable = CompositeDisposable()
+    private var usersView: IUsersView? = null
+    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
 
     override fun bindView(usersView: IUsersView) {
@@ -27,13 +27,15 @@ class UsersPresenter(val usersInteractor: IUsersInteractor) : IUsersPresenter {
 
     override fun loadUsers() {
         usersView?.showProgress()
-        val disposable: Disposable = usersInteractor.getUsers()
+        val disposable = usersInteractor.getUsers()
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext({
-                    if (NetworkUtil.isNetworkAvailable(usersView?.getContext()))
-                        usersView?.showSnackbar("Check internet connection")
+                    if (NetworkUtil.isNetworkAvailable(usersView?.getContext())) usersView?.showSnackbar("Check internet connection")
                 })
-                .subscribe({ users -> usersView?.showUsers(users) })
+                .subscribe(
+                        { usersView?.showUsers(it) },
+                        { Timber.tag(UsersPresenter::class.java.simpleName).e(it.message) },
+                        { usersView?.dismissProgress() })
         compositeDisposable.add(disposable)
     }
 }

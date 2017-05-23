@@ -13,8 +13,5 @@ class DbModule {
 
     @Provides
     @Singleton
-    fun provideDbService(): DbService {
-        return DbService()
-    }
-
+    fun provideDbService(): DbService = DbService()
 }

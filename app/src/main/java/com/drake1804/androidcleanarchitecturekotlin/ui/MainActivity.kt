@@ -16,10 +16,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
 
         val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.content, BlankFragment())
+        transaction.replace(R.id.container, BlankFragment())
         transaction.commit()
     }
 }

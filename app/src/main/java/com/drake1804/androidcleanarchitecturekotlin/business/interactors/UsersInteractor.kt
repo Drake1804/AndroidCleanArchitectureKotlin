@@ -2,8 +2,8 @@ package com.drake1804.androidcleanarchitecturekotlin.business.interactors
 
 import com.drake1804.androidcleanarchitecturekotlin.business.EmptyException
 import com.drake1804.androidcleanarchitecturekotlin.business.interfaces.IUsersInteractor
-import com.drake1804.androidcleanarchitecturekotlin.data.rest.UserModel
 import com.drake1804.androidcleanarchitecturekotlin.business.interfaces.IUsersRepository
+import com.drake1804.androidcleanarchitecturekotlin.data.rest.UserModel
 import io.reactivex.Observable
 
 /**
@@ -12,12 +12,8 @@ import io.reactivex.Observable
 
 class UsersInteractor(val userRepository: IUsersRepository) : IUsersInteractor {
 
-    override fun getUsers(): Observable<List<UserModel>> {
-        return userRepository.getUsers()
-                .flatMap {userModels ->
-                    if (userModels.isNotEmpty())
-                        Observable.just(userModels)
-                    else
-                        Observable.error(EmptyException("Empty"))}
-    }
+    override fun getUsers(): Observable<List<UserModel>> =
+            userRepository.getUsers()
+                    .flatMap { if (it.isNotEmpty()) Observable.just(it) else Observable.error(EmptyException("Empty"))}
+
 }

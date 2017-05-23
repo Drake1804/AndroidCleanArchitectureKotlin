@@ -1,5 +1,6 @@
 package com.drake1804.androidcleanarchitecturekotlin.di.application
 
+import com.drake1804.androidcleanarchitecturekotlin.di.users.UsersComponent
 import com.drake1804.androidcleanarchitecturekotlin.di.users.UsersModule
 import dagger.Component
 import javax.inject.Singleton
@@ -10,7 +11,5 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = arrayOf(ApplicationModule::class, NetworkModule::class, DbModule::class))
 interface ApplicationComponent {
-
-    fun plusUsersComponent(usersModule: UsersModule)
-
+    fun plusUsersComponent(usersModule: UsersModule): UsersComponent
 }

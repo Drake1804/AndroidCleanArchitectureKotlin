@@ -14,8 +14,8 @@ import io.reactivex.schedulers.Schedulers
 class UsersRepository(val restService: RestService, val dbService: DbService) : IUsersRepository {
 
     override fun getUsers(): Observable<List<UserModel>> {
-        val usersDbObservable: Observable<List<UserModel>> = dbService.getUsers().subscribeOn(Schedulers.computation())
-        val usersRestObservable: Observable<List<UserModel>> = restService.getUsers()
+        val usersDbObservable = dbService.getUsers().subscribeOn(Schedulers.computation())
+        val usersRestObservable = restService.getUsers()
                 .onErrorReturn { ArrayList() }
                 .filter { users -> users.isNotEmpty() }
                 .subscribeOn(Schedulers.io())

@@ -7,6 +7,9 @@ import com.drake1804.androidcleanarchitecturekotlin.di.application.ApplicationMo
 import com.drake1804.androidcleanarchitecturekotlin.di.application.DaggerApplicationComponent
 import com.drake1804.androidcleanarchitecturekotlin.di.users.UsersComponent
 import com.drake1804.androidcleanarchitecturekotlin.di.users.UsersModule
+import io.realm.Realm
+import io.realm.RealmConfiguration
+import timber.log.Timber
 
 /**
  * Created by drake1804 on 5/19/17.
@@ -14,10 +17,10 @@ import com.drake1804.androidcleanarchitecturekotlin.di.users.UsersModule
 
 class ACAKApplication : Application() {
 
-    companion object {
-        @JvmStatic lateinit var applicationComponent: ApplicationComponent
-        @JvmStatic lateinit var usersComponent: UsersComponent
+    lateinit var applicationComponent: ApplicationComponent
+    lateinit var usersComponent: UsersComponent
 
+    companion object {
         @JvmStatic fun get(context: Context): ACAKApplication = context.applicationContext as ACAKApplication
     }
 
@@ -26,11 +29,19 @@ class ACAKApplication : Application() {
         applicationComponent = DaggerApplicationComponent.builder()
                 .applicationModule(ApplicationModule(this)).build()
 
-        usersComponent = applicationComponent.plusUsersComponent(UsersModule())
+        initRealm()
+
+        if (BuildConfig.DEBUG) Timber.plant(Timber.DebugTree())
     }
 
     fun plusUsersComponent(): UsersComponent {
+        usersComponent = applicationComponent.plusUsersComponent(UsersModule())
 
+        return usersComponent
     }
 
+    fun initRealm() {
+        Realm.init(applicationContext)
+        Realm.setDefaultConfiguration(RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build())
+    }
 }

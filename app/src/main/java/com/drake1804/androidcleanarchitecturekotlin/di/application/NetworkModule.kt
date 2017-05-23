@@ -24,28 +24,24 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideGson(): Gson {
-        return Gson()
-    }
+    fun provideGson(): Gson = Gson()
 
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
-        val okHttpClient: OkHttpClient = OkHttpClient.Builder()
+        val okHttpClient = OkHttpClient.Builder()
                 .readTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .addInterceptor(HttpLoggingInterceptor()
-                        .setLevel(
-                                if(BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
-                                else HttpLoggingInterceptor.Level.NONE))
-                .build()
+                        .setLevel(if(BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
+                                else HttpLoggingInterceptor.Level.NONE)).build()
         return okHttpClient
     }
 
     @Provides
     @Singleton
     fun provideRestApi(okHttpClient: OkHttpClient, gson: Gson): RestApi {
-        val retrofit: Retrofit = Retrofit.Builder().baseUrl(BASE_URL).client(okHttpClient).addConverterFactory(GsonConverterFactory.create(gson))
+        val retrofit = Retrofit.Builder().baseUrl(BASE_URL).client(okHttpClient).addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build()
 
@@ -54,8 +50,5 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRestService(restApi: RestApi): RestService {
-        return RestService(restApi)
-    }
-
+    fun provideRestService(restApi: RestApi): RestService = RestService(restApi)
 }

@@ -16,9 +16,9 @@ class DbService {
     fun getUsers(): Observable<List<UserModel>> {
         val realm: Realm = Realm.getDefaultInstance()
         val userEntities: RealmResults<UserEntity> = realm.where(UserEntity::class.java).findAll()
-        var usersList: List<UserModel> = ArrayList()
-        usersList.plus(convert(userEntities))
-        Timber.tag(DbService::class.simpleName).d("get users %d", usersList.size)
+        val usersList: ArrayList<UserModel> = arrayListOf()
+        usersList.addAll(convert(userEntities))
+        Timber.tag(DbService::class.java.simpleName).d("get users %d", usersList.size)
         realm.close()
 
         return Observable.just(usersList)
@@ -26,23 +26,16 @@ class DbService {
 
     fun saveUsers(userModels: List<UserModel>) {
         val realm: Realm = Realm.getDefaultInstance()
-        var userEntities: RealmList<UserEntity> = RealmList()
-        for(userModel in userModels) {
-            userEntities.plus(Mapper.mapUser(userModel))
-        }
-        realm.executeTransaction({
-             realm1 -> realm1.copyToRealmOrUpdate(userEntities)
-        })
+        val userEntities: RealmList<UserEntity> = RealmList()
+        userModels.mapTo(userEntities) { Mapper.mapUser(it) }
+        realm.executeTransaction{ realm1 -> realm1.copyToRealmOrUpdate(userEntities) }
         realm.close()
     }
 
 
-    fun convert(userEntities: List<UserEntity>) {
-        var users: List<UserModel> = ArrayList()
-        for(userEntity in userEntities) {
-            users.plus(Mapper.mapUser(userEntity))
-        }
+    fun convert(userEntities: List<UserEntity>): List<UserModel> {
+        val users: ArrayList<UserModel> = arrayListOf()
+        userEntities.mapTo(users) { Mapper.mapUser(it) }
+        return users
     }
-
-
 }

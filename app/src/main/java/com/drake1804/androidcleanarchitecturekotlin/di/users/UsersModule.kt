@@ -19,20 +19,16 @@ class UsersModule {
 
     @Provides
     @UsersScope
-    fun provideUsersRepository(restService: RestService, dbService: DbService): IUsersRepository {
-        return UsersRepository(restService, dbService)
-    }
+    fun provideUsersRepository(restService: RestService, dbService: DbService): IUsersRepository =
+        UsersRepository(restService, dbService)
 
     @Provides
     @UsersScope
-    fun provideUsersInteractor(usersRepository: UsersRepository): IUsersInteractor {
-        return UsersInteractor(usersRepository)
-    }
+    fun provideUsersInteractor(usersRepository: IUsersRepository): IUsersInteractor =
+        UsersInteractor(usersRepository)
 
     @Provides
     @UsersScope
-    fun provideUsersPresenter(usersInteractor: UsersInteractor): IUsersPresenter {
-        return UsersPresenter(usersInteractor)
-    }
-
+    fun provideUsersPresenter(usersInteractor: IUsersInteractor): IUsersPresenter =
+        UsersPresenter(usersInteractor)
 }
