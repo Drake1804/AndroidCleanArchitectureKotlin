@@ -16,8 +16,6 @@ class UsersRepository(val restService: RestService, val dbService: DbService) : 
     override fun getUsers(): Observable<List<UserModel>> {
         val usersDbObservable = dbService.getUsers().subscribeOn(Schedulers.computation())
         val usersRestObservable = restService.getUsers()
-                .onErrorReturn { ArrayList() }
-                .filter { users -> users.isNotEmpty() }
                 .subscribeOn(Schedulers.io())
                 .doOnNext { users -> dbService.saveUsers(users) }
                 .subscribeOn(Schedulers.computation())

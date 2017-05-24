@@ -14,6 +14,5 @@ class UsersInteractor(val userRepository: IUsersRepository) : IUsersInteractor {
 
     override fun getUsers(): Observable<List<UserModel>> =
             userRepository.getUsers()
-                    .flatMap { if (it.isNotEmpty()) Observable.just(it) else Observable.error(EmptyException("Empty"))}
 
 }
