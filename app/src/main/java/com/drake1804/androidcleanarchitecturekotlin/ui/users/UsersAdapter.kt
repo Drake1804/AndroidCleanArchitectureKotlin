@@ -25,16 +25,13 @@ class UsersAdapter : RecyclerView.Adapter<UsersAdapter.ViewHolder>() {
     }
 
     override fun getItemCount(): Int {
-        if(items == null) {
-            return 0
-        }
+        if(items == null) return 0
         return items?.size!!
     }
 
     fun setItems(users: List<UserModel>) {
         if(items == null) {
-            items = mutableListOf<UserModel>()
-            return
+            items = mutableListOf()
         }
         items?.clear()
         items?.addAll(users)

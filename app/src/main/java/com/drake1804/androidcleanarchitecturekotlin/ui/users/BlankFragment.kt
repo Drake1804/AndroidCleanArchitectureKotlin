@@ -26,17 +26,16 @@ class BlankFragment : Fragment(), IUsersView, SwipeRefreshLayout.OnRefreshListen
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val view: View = inflater!!.inflate(R.layout.fragment_blank, container, false)
         ACAKApplication.get(activity).plusUsersComponent().inject(this)
         presenter.bindView(this)
+        usersAdapter = UsersAdapter()
 
-        return view
+        return inflater!!.inflate(R.layout.fragment_blank, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         swipeRefreshLayout.setOnRefreshListener { this }
         recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-        usersAdapter = UsersAdapter()
         recyclerView.adapter = usersAdapter
     }
 

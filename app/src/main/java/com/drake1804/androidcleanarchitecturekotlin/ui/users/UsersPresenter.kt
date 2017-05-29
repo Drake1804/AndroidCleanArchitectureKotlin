@@ -10,10 +10,20 @@ import timber.log.Timber
 /**
  * Created by drake1804 on 5/20/17.
  */
-class UsersPresenter(val usersInteractor: IUsersInteractor) : IUsersPresenter {
+class UsersPresenter(usersInteractor: IUsersInteractor) : IUsersPresenter {
 
     private var usersView: IUsersView? = null
-    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
+    private val compositeDisposable = CompositeDisposable()
+    private val disposable = usersInteractor.getUsers()
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext {
+                if (NetworkUtil.isNetworkAvailable(usersView?.getContext()))
+                    usersView?.showSnackbar("Check internet connection")
+            }
+            .subscribe(
+                    { usersView?.showUsers(it) },
+                    { Timber.tag(UsersPresenter::class.java.simpleName).e(it.message) },
+                    { usersView?.dismissProgress() })
 
 
     override fun bindView(usersView: IUsersView) {
@@ -27,15 +37,6 @@ class UsersPresenter(val usersInteractor: IUsersInteractor) : IUsersPresenter {
 
     override fun loadUsers() {
         usersView?.showProgress()
-        val disposable = usersInteractor.getUsers()
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext({
-                    if (NetworkUtil.isNetworkAvailable(usersView?.getContext())) usersView?.showSnackbar("Check internet connection")
-                })
-                .subscribe(
-                        { usersView?.showUsers(it) },
-                        { Timber.tag(UsersPresenter::class.java.simpleName).e(it.message) },
-                        { usersView?.dismissProgress() })
         compositeDisposable.add(disposable)
     }
 }

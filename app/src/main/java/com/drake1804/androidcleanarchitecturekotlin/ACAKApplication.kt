@@ -18,7 +18,6 @@ import timber.log.Timber
 class ACAKApplication : Application() {
 
     lateinit var applicationComponent: ApplicationComponent
-    lateinit var usersComponent: UsersComponent
 
     companion object {
         @JvmStatic fun get(context: Context): ACAKApplication = context.applicationContext as ACAKApplication
@@ -34,11 +33,7 @@ class ACAKApplication : Application() {
         if (BuildConfig.DEBUG) Timber.plant(Timber.DebugTree())
     }
 
-    fun plusUsersComponent(): UsersComponent {
-        usersComponent = applicationComponent.plusUsersComponent(UsersModule())
-
-        return usersComponent
-    }
+    fun plusUsersComponent() = applicationComponent.plusUsersComponent(UsersModule())
 
     fun initRealm() {
         Realm.init(applicationContext)

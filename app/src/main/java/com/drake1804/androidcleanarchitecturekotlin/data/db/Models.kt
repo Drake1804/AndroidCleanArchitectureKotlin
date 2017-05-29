@@ -1,5 +1,6 @@
 package com.drake1804.androidcleanarchitecturekotlin.data.db
 
+import com.drake1804.androidcleanarchitecturekotlin.data.rest.UserModel
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 
@@ -35,4 +36,37 @@ open class UserEntity : RealmObject() {
     var phone: String = ""
     var website: String = ""
     var companyEntity: CompanyEntity = CompanyEntity()
+
+    object Mapper {
+        fun from(userModel: UserModel): UserEntity {
+            val geoEntity = GeoEntity()
+            geoEntity.lat = userModel.address.geo.lat
+            geoEntity.lng = userModel.address.geo.lng
+
+            val addressEntity = AddressEntity()
+            addressEntity.street = userModel.address.street
+            addressEntity.suite = userModel.address.suite
+            addressEntity.city = userModel.address.city
+            addressEntity.zipcode = userModel.address.zipcode
+            addressEntity.geoEntity = geoEntity
+
+            val companyEntity = CompanyEntity()
+            companyEntity.name = userModel.company.name
+            companyEntity.catchPhrase = userModel.company.catchPhrase
+            companyEntity.bs = userModel.company.bs
+
+            val userEntity = UserEntity()
+            userEntity.id = userModel.id
+            userEntity.name = userModel.name
+            userEntity.username = userModel.username
+            userEntity.email = userModel.email
+            userEntity.addressEntity = addressEntity
+            userEntity.phone = userModel.phone
+            userEntity.website = userModel.website
+            userEntity.companyEntity = companyEntity
+
+            return userEntity
+        }
+    }
 }
+
