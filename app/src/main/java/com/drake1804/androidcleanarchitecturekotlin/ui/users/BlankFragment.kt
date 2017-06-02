@@ -3,7 +3,6 @@ package com.drake1804.androidcleanarchitecturekotlin.ui.users
 
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
@@ -14,10 +13,11 @@ import com.drake1804.androidcleanarchitecturekotlin.ACAKApplication
 import com.drake1804.androidcleanarchitecturekotlin.R
 import com.drake1804.androidcleanarchitecturekotlin.business.interfaces.IUsersPresenter
 import com.drake1804.androidcleanarchitecturekotlin.data.rest.UserModel
+import com.drake1804.androidcleanarchitecturekotlin.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_blank.*
 import javax.inject.Inject
 
-class BlankFragment : Fragment(), IUsersView, SwipeRefreshLayout.OnRefreshListener {
+class BlankFragment : BaseFragment(), IUsersView, SwipeRefreshLayout.OnRefreshListener {
 
     @Inject
     lateinit var presenter: IUsersPresenter
@@ -30,7 +30,7 @@ class BlankFragment : Fragment(), IUsersView, SwipeRefreshLayout.OnRefreshListen
         presenter.bindView(this)
         usersAdapter = UsersAdapter()
 
-        return inflater!!.inflate(R.layout.fragment_blank, container, false)
+        return context.inflate(R.layout.fragment_blank)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -61,7 +61,7 @@ class BlankFragment : Fragment(), IUsersView, SwipeRefreshLayout.OnRefreshListen
     }
 
     override fun dismissProgress() {
-        swipeRefreshLayout.isRefreshing = false
+        swipeRefreshLayout.post({ swipeRefreshLayout.isRefreshing = false })
     }
 
     override fun showToast(text: String) = Toast.makeText(activity, text, Toast.LENGTH_LONG).show()

@@ -34,6 +34,7 @@ dependencies {
     final RETROFIT_VERSION = '2.2.0'
     final OKHTTP_VERSION = '3.7.0'
     final TIMBER_VERSION = '4.5.1'
+    final RX_BINDING = '2.0.0'
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -62,6 +63,9 @@ dependencies {
 
 //    Timber
     compile "com.jakewharton.timber:timber:$TIMBER_VERSION"
+
+//    RxBinding
+    compile "com.jakewharton.rxbinding2:rxbinding-support-v4:$RX_BINDING"
 
 //    JUnit
     testCompile 'junit:junit:4.12'

@@ -23,7 +23,8 @@ class UsersPresenter(usersInteractor: IUsersInteractor) : IUsersPresenter {
             .subscribe(
                     { usersView?.showUsers(it) },
                     { Timber.tag(UsersPresenter::class.java.simpleName).e(it.message) },
-                    { usersView?.dismissProgress() })
+                    { usersView?.dismissProgress() },
+                    { usersView?.showProgress() })
 
 
     override fun bindView(usersView: IUsersView) {
@@ -36,7 +37,6 @@ class UsersPresenter(usersInteractor: IUsersInteractor) : IUsersPresenter {
     }
 
     override fun loadUsers() {
-        usersView?.showProgress()
         compositeDisposable.add(disposable)
     }
 }
